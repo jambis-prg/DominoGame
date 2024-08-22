@@ -1,3 +1,5 @@
 .vscode/
 bin-int/
 bin
+
+!vendor/SFML-2.6.1/bin
