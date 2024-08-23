@@ -4,13 +4,14 @@
 
 #define BIT_FLAGS(x) 1 << x
 
-#define EVENT_TYPES_COUNT 3
+#define EVENT_TYPES_COUNT 4
 
 enum UIEventTypes : uint32_t
 {
     MouseButtonPressed = BIT_FLAGS(0),
     MouseScrolled = BIT_FLAGS(1),
     MouseMoved = BIT_FLAGS(2),
+    KeyChar = BIT_FLAGS(3),
     All = ~0u
 };
 
@@ -64,5 +65,22 @@ public:
     UIEventTypes GetType() const override
     {
         return UIEventTypes::MouseMoved;
+    }
+};
+
+class UIKeyChar : public UIEvent
+{
+private:
+    uint32_t m_Unicode;
+public:
+    UIKeyChar(uint32_t unicode) : m_Unicode(unicode)
+    {
+    }
+
+    uint32_t GetUnicode() const { return m_Unicode; }
+
+    UIEventTypes GetType() const override
+    {
+        return UIEventTypes::KeyChar;
     }
 };

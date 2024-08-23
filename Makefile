@@ -12,19 +12,28 @@ SOURCES = $(call rwildcard, $(SRCDIR),*.cpp)
 OBJECTS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SOURCES))
 
 SFML = vendor\SFML-2.6.1
+SFML_GRAPHICS = "$(SFML)\bin\sfml-graphics-2.dll"
+SFML_SYSTEM = "$(SFML)\bin\sfml-system-2.dll"
+SFML_WINDOW = "$(SFML)\bin\sfml-window-2.dll"
 
-CCFLAGS = -Wall -I$(SFML)/include -I$(SRCDIR)
+CCFLAGS = -Wall -I$(SFML)/include -I$(SRCDIR) -D_DEBUG
 LDFLAGS = -L$(SFML)\lib -lsfml-graphics -lsfml-window -lsfml-system -lgdi32 -lopengl32 -lfreetype -lwinmm -lws2_32
 
 all: $(TARGET)
+
+debug: CCFLAGS += -g
+debug: LDFLAGS += -g
+debug: $(TARGET)
+
+recompile: clean $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	@ECHO "$(SOURCES)"
 	@if not exist $(TARGETDIR) mkdir $(TARGETDIR)
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $(TARGETDIR)/$@
-	copy "$(SFML)\bin\sfml-graphics-2.dll" "$(TARGETDIR)\"
-	copy "$(SFML)\bin\sfml-system-2.dll" "$(TARGETDIR)\"
-	copy "$(SFML)\bin\sfml-window-2.dll" "$(TARGETDIR)\"
+	@copy $(SFML_GRAPHICS) "$(TARGETDIR)\"
+	@copy $(SFML_SYSTEM) "$(TARGETDIR)\"
+	@copy $(SFML_WINDOW) "$(TARGETDIR)\"
 
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp

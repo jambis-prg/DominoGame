@@ -19,14 +19,13 @@ public:
     void OnEvent(UIEvent &event);
 
     template<typename T, typename... Args>
-    void InsertElement(Args&&... args)
+    T* InsertElement(Args&&... args)
     {
-        auto *e = new T(std::forward<Args>(args)...);
+        T* e = new T(std::forward<Args>(args)...);
         m_AllElements.push_back(e);
 
         if(e->IsInteractable())
         {
-
             UIEventTypes type = e->GetEventFlags();
             for(uint32_t i = 0; i < EVENT_TYPES_COUNT && type != 0; i++)
             {
@@ -36,6 +35,8 @@ public:
                 type = (UIEventTypes)(type >> 1);
             }
         }
+
+        return e;
     }
 
     void Draw(sf::RenderWindow &window);
