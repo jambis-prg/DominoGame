@@ -69,4 +69,4 @@ Contribuições são bem-vindas! Se você encontrar algum problema ou tiver suge
 
 ## Licença
 
-Este projeto está licenciado sob a Apache License 2.0. Veja o arquivo `LICENSE` para mais detalhes.
+Este projeto está licenciado sob a Apache-2.0 License. Veja o arquivo `LICENSE` para mais detalhes.
