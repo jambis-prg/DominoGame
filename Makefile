@@ -17,7 +17,7 @@ SFML_SYSTEM = "$(SFML)\bin\sfml-system-2.dll"
 SFML_WINDOW = "$(SFML)\bin\sfml-window-2.dll"
 SFML_NETWORK = "$(SFML)\bin\sfml-network-2.dll"
 
-CCFLAGS = -Wall -I$(SFML)/include -I$(SRCDIR) -D_DEBUG
+CCFLAGS = -std=c++17 -Wall -I$(SFML)/include -I$(SRCDIR) -D_DEBUG
 LDFLAGS = -L$(SFML)\lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lgdi32 -lopengl32 -lfreetype -lwinmm -lws2_32
 
 all: $(TARGET)

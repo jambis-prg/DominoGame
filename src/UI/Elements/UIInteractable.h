@@ -13,12 +13,11 @@ private:
     sf::RectangleShape m_Shape;
     ButtonCallback m_Callback;
     DataPacket m_Packet;
-    bool m_Hovered;
+    bool m_Hovered, m_Enabled, m_Visible;
     sf::Color m_Color, m_HoveredColor;
     sf::Text m_Text;
-
 public:
-    UIButton(sf::Rect<float> rect, ButtonCallback callback, std::string text, uint32_t textSize, const DataPacket &packet = DataPacket()) : m_Position(rect.getPosition()), m_Shape(rect.getSize()), m_Callback(callback), m_Packet(packet), m_Hovered(false)
+    UIButton(sf::Rect<float> rect, ButtonCallback callback, std::string text, uint32_t textSize, const DataPacket &packet = DataPacket()) : m_Position(rect.getPosition()), m_Shape(rect.getSize()), m_Callback(callback), m_Packet(packet), m_Hovered(false), m_Enabled(true), m_Visible(true)
     {
         m_Shape.setPosition(m_Position - m_Shape.getSize()/2.f);
 
@@ -42,7 +41,7 @@ public:
 
     bool OnEvent(UIEvent &event) override
     {
-        if(m_Callback == nullptr) return false;
+        if(m_Callback == nullptr || m_Enabled == false) return false;
 
         bool handlerResult = false;
         if(DispatchEvent<UIMouseButtonPressed>(event, handlerResult,[this](UIMouseButtonPressed *e)
@@ -89,8 +88,19 @@ public:
 
     void Draw(sf::RenderWindow &window) override
     {
-        window.draw(m_Shape);
-        window.draw(m_Text);
+        if(m_Visible)
+        {
+            window.draw(m_Shape);
+            window.draw(m_Text);
+        }
+    }
+
+    void SetVisible(bool visible) { m_Visible = visible; }
+    void SetEnable(bool enable) 
+    { 
+        m_Enabled = enable; 
+        m_Hovered = !enable; 
+        !enable ? m_Shape.setFillColor(m_HoveredColor) : m_Shape.setFillColor(m_Color); 
     }
 
     bool IsInteractable() override 
