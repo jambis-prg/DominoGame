@@ -3,19 +3,22 @@
 #include <functional>
 #include "UIElement.h"
 #include "../Font/FontManager.h"
+#include "../../Utils/DataPacket.h"
 
 class UIButton : public UIElement
 {
+    using ButtonCallback = std::function<void(DataPacket &)>;
 private:
     sf::Vector2f m_Position;
     sf::RectangleShape m_Shape;
-    std::function<void(void)> m_Callback;
+    ButtonCallback m_Callback;
+    DataPacket m_Packet;
     bool m_Hovered;
     sf::Color m_Color, m_HoveredColor;
     sf::Text m_Text;
-public:
 
-    UIButton(sf::Rect<float> rect, std::function<void(void)> callback, std::string text, uint32_t textSize) : m_Position(rect.getPosition()), m_Shape(rect.getSize()), m_Callback(callback), m_Hovered(false)
+public:
+    UIButton(sf::Rect<float> rect, ButtonCallback callback, std::string text, uint32_t textSize, const DataPacket &packet = DataPacket()) : m_Position(rect.getPosition()), m_Shape(rect.getSize()), m_Callback(callback), m_Packet(packet), m_Hovered(false)
     {
         m_Shape.setPosition(m_Position - m_Shape.getSize()/2.f);
 
@@ -47,7 +50,8 @@ public:
             auto rect = sf::FloatRect(m_Position, m_Shape.getSize());
             if(e->LeftPressed() && rect.contains((sf::Vector2f)e->GetPosition() + rect.getSize()/2.f))
             {
-                m_Callback();
+                m_Callback(m_Packet);
+                m_Packet.ResetRead();
                 return true;
             }
 
@@ -102,9 +106,9 @@ private:
     sf::RectangleShape m_BackgroundShape;
     sf::Text m_BackgroundText, m_InputText;
     bool m_Selected;
-    std::string &m_RefString;
+    std::string m_Content;
 public:
-    UITextInput(sf::Rect<float> rect, std::string backgroundText, std::string &refString) : m_Position(rect.getPosition()), m_BackgroundShape(rect.getSize()), m_Selected(false), m_RefString(refString)
+    UITextInput(sf::Rect<float> rect, std::string backgroundText) : m_Position(rect.getPosition()), m_BackgroundShape(rect.getSize()), m_Selected(false)
     {
         m_BackgroundShape.setPosition(m_Position - m_BackgroundShape.getSize() / 2.f);
 
@@ -151,16 +155,16 @@ public:
                         switch (e->GetUnicode())
                         {
                         case 0x08: // backspace
-                            if(!m_RefString.empty())
-                                m_RefString.pop_back();
+                            if(!m_Content.empty())
+                                m_Content.pop_back();
                             break;
                         default:
                             break;
                         }
                     }
                     else
-                        m_RefString += e->GetUnicode();
-                    m_InputText.setString(m_RefString);
+                        m_Content += e->GetUnicode();
+                    m_InputText.setString(m_Content);
                     return true;
                 }
 
@@ -175,11 +179,14 @@ public:
     {
         window.draw(m_BackgroundShape);
 
-        if(m_RefString.empty() && !m_Selected)
+        if(m_Content.empty() && !m_Selected)
             window.draw(m_BackgroundText);
         
         window.draw(m_InputText);
     }
+
+    const std::string& GetContent() const { return m_Content; }
+    void SetContent(const char *content) { m_Content = content; m_InputText.setString(m_Content); }
 
     bool IsInteractable() override 
     {

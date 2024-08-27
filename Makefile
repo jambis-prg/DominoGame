@@ -15,9 +15,10 @@ SFML = vendor\SFML-2.6.1
 SFML_GRAPHICS = "$(SFML)\bin\sfml-graphics-2.dll"
 SFML_SYSTEM = "$(SFML)\bin\sfml-system-2.dll"
 SFML_WINDOW = "$(SFML)\bin\sfml-window-2.dll"
+SFML_NETWORK = "$(SFML)\bin\sfml-network-2.dll"
 
 CCFLAGS = -Wall -I$(SFML)/include -I$(SRCDIR) -D_DEBUG
-LDFLAGS = -L$(SFML)\lib -lsfml-graphics -lsfml-window -lsfml-system -lgdi32 -lopengl32 -lfreetype -lwinmm -lws2_32
+LDFLAGS = -L$(SFML)\lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lgdi32 -lopengl32 -lfreetype -lwinmm -lws2_32
 
 all: $(TARGET)
 
@@ -28,12 +29,12 @@ debug: $(TARGET)
 recompile: clean $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	@ECHO "$(SOURCES)"
 	@if not exist $(TARGETDIR) mkdir $(TARGETDIR)
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $(TARGETDIR)/$@
 	@copy $(SFML_GRAPHICS) "$(TARGETDIR)\"
 	@copy $(SFML_SYSTEM) "$(TARGETDIR)\"
 	@copy $(SFML_WINDOW) "$(TARGETDIR)\"
+	@copy $(SFML_NETWORK) "$(TARGETDIR)\"
 
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
